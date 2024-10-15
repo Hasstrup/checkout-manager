@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 require "checkout/core/inventory_builder"
-require "checkout/models/item"
+require "checkout/models/inventory"
 require "checkout/models/discount"
 
 RSpec.describe Checkout::Core::InventoryBuilder do
   let(:fixture_path) { File.join(File.dirname(__FILE__), "../../fixtures/inventory.yml") }
-  let(:builder) { described_class.new(fixture_path) }
   let(:inventory) { builder.build }
 
   describe "#build" do
@@ -16,7 +15,7 @@ RSpec.describe Checkout::Core::InventoryBuilder do
       it "builds theinventory items correctly from the given source" do
         aggregate_failures do
           expect(inventory.items.count).to eq(2)
-          expect(inventory.items.sample).to be_a(::Checkout::Models::Item)
+          expect(inventory.items.sample).to be_a(::Checkout::Models::InventoryItem)
           expect(inventory.items.first.cost).to eq(50)
         end
       end
@@ -36,7 +35,7 @@ RSpec.describe Checkout::Core::InventoryBuilder do
       it "builds the inventory items from the local inventory source" do # present in /core/inventory.yml
         aggregate_failures do
           expect(inventory.items.count).to eq(3)
-          expect(inventory.items.sample).to be_a(::Checkout::Models::Item)
+          expect(inventory.items.sample).to be_a(::Checkout::Models::InventoryItem)
           expect(inventory.items.first.cost).to eq(50)
         end
       end

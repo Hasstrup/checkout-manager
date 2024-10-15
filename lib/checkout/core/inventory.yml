@@ -21,7 +21,8 @@ discounts:
     applicable_item_id: 1
     applicable_item_count: 2
     usable: true
-  batch_discount_on_item_b:
+    priority: 1
+  batch_discount_on_b:
     global: false
     deductible_type: unit
     deductible_amount: null
@@ -30,15 +31,17 @@ discounts:
     applicable_item_id: 2
     applicable_item_count: 3
     usable: true
+    priority: 1
   single_discount_on_c: # added this for demonstration purposes
     global: false
     deductible_type: unit
     deductible_amount: 5
-    fixed_amount_total: 0
+    fixed_amount_total: null
     application_context: single
     applicable_item_count: 1
     applicable_item_id: 3
     usable: false
+    priority: 1
   group_discount_on_price_total:
     global: true # apply this discount to total price
     deductible_type: percentage
@@ -48,3 +51,4 @@ discounts:
     applicable_item_count: null
     applicable_item_id: null
     usable: true
+    priority: 1

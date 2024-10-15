@@ -2,7 +2,6 @@
 
 require "yaml"
 require "checkout/models/inventory"
-require "checkout/models/item"
 require "checkout/models/discount"
 
 module Checkout
@@ -16,12 +15,12 @@ module Checkout
       end
 
       # @param [String] source_path the path to the yaml file containing the inventory
-      # @return [String]
       def initialize(source_path = nil)
         @source_path = source_path
       end
 
-      # reads the yam file and builds the inventory object
+      # reads the yaml file and builds the inventory object
+      # from the keys defined in the source file
       # @return [Checkout::Models::Inventory]
       # @examples:
       #  ::Checkout::Core::InventoryBuilder.build
@@ -43,7 +42,7 @@ module Checkout
 
       def inventory_items
         @inventory_items ||= inventory_source[INVENTORY_ITEMS_KEY].map do |_, item_attributes|
-          ::Checkout::Models::Item.new(**item_attributes)
+          ::Checkout::Models::InventoryItem.new(**item_attributes)
         end
       end
 

@@ -3,7 +3,10 @@
 module Checkout
   module Models
     INVENTORY_KEYS = %i[items discounts].freeze
-    class Inventory < Struct.new(*INVENTORY_KEYS, keyword_init: true)
+    INVENTORY_ITEM_MODEL_KEYS = %i[name id cost].freeze
+    InventoryItem = Struct.new(*INVENTORY_ITEM_MODEL_KEYS, keyword_init: true)
+
+    Inventory = Struct.new(*INVENTORY_KEYS, keyword_init: true) do
       def add_discount; end
 
       def add_item; end
