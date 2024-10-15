@@ -2,7 +2,7 @@
 
 module Checkout
   module Models
-    MODEL_KEYS = %i[name id cost].freeze
-    Item = Struct.new(*MODEL_KEYS, keyword_init: true)
+    ITEM_MODEL_KEYS = %i[name id cost].freeze
+    Item = Struct.new(*ITEM_MODEL_KEYS, keyword_init: true)
   end
 end
