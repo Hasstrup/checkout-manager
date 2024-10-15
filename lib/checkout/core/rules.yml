@@ -1,0 +1,50 @@
+inventory:
+  a:
+    name: A
+    id: 1
+    cost: 50
+  b:
+    name: B
+    id: 2
+    cost: 30
+  c:
+    name: C
+    id: 3
+    cost: 20
+discounts:
+  batch_discount_on_a:
+    global: false # only applicable to single inventory items
+    deductible_type: unit
+    deductible_amount: null
+    fixed_amount_total: 90 
+    application_context: batch
+    applicable_item_id: 1
+    applicable_item_count: 2
+    usable: true
+  batch_discount_on_item_b:
+    global: false
+    deductible_type: unit
+    deductible_amount: null
+    fixed_amount_total: 75
+    application_context: batch
+    applicable_item_id: 2
+    applicable_item_count: 3
+    usable: true
+  single_discount_on_c: # added this for demonstration purposes
+    global: false
+    deductible_type: unit
+    deductible_amount: 5
+    fixed_amount_total: 0
+    application_context: single
+    applicable_item_count: 1
+    applicable_item_id: 3
+    usable: false
+  group_discount_on_price_total:
+    global: true # apply this discount to total price
+    deductible_type: percentage
+    deductible_amount: 10
+    fixed_amount_total: null
+    application_context: single
+    applicable_item_count: null
+    applicable_item_id: null
+    usable: true
