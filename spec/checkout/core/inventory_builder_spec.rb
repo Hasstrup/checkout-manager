@@ -12,7 +12,7 @@ RSpec.describe Checkout::Core::InventoryBuilder do
     context "when passed a source file path" do
       let(:builder) { described_class.new(fixture_path) }
 
-      it "builds theinventory items correctly from the given source" do
+      it "builds the inventory items correctly from the given source" do
         aggregate_failures do
           expect(inventory.items.count).to eq(2)
           expect(inventory.items.sample).to be_a(::Checkout::Models::InventoryItem)

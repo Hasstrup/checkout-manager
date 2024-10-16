@@ -73,15 +73,11 @@ module Checkout
         cursor.applied_discounts << discount.name # save applied discounts for introspection
         # if the remainder is greater than the discount's applicable_amount,
         # take another batch and apply same discount
-        apply_batch_discount!(cursor, discount) if reapply_discount?(cursor, discount)
+        apply_batch_discount!(cursor, discount)
         cursor
       end
 
       def apply_batch_discount?(cursor, discount)
-        cursor.remainder >= discount.applicable_item_count
-      end
-
-      def reapply_discount?(cursor, discount)
         cursor.remainder >= discount.applicable_item_count
       end
 
