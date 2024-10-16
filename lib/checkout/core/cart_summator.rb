@@ -6,7 +6,7 @@ module Checkout
   module Core
     class CartSummator
       CURSOR_KEYS = %i[entry current_cost remainder applied_discounts].freeze
-      SUMMATION_RESULT_KEYS = %i[total cursors applied_global_discounts].freeze
+      SUMMATION_RESULT_KEYS = %i[total cursors global_discounts_applied].freeze
 
       Cursor = Struct.new(*CURSOR_KEYS, keyword_init: true) do
         extend Core::Concerns::CursorOperations
@@ -29,7 +29,7 @@ module Checkout
         SummationResult.new(
           total: apply_global_discounts(applied_cart_cursors.sum(&:current_cost)),
           cursors: applied_cart_cursors,
-          applied_global_discounts: global_scope_discounts.map(&:name)
+          global_discounts_applied: applied_global_discounts
         )
       end
 
@@ -65,7 +65,7 @@ module Checkout
       end
 
       def apply_batch_discount!(cursor, discount)
-        return cursor if cursor.remainder.zero?
+        return cursor unless apply_batch_discount?(cursor, discount)
 
         original_cost = cursor.entry.item.cost
         cursor.current_cost += discount.fixed_amount_total || infer_additional_entry_cost(original_cost, discount)
@@ -75,6 +75,10 @@ module Checkout
         # take another batch and apply same discount
         apply_batch_discount!(cursor, discount) if reapply_discount?(cursor, discount)
         cursor
+      end
+
+      def apply_batch_discount?(cursor, discount)
+        cursor.remainder >= discount.applicable_item_count
       end
 
       def reapply_discount?(cursor, discount)
@@ -87,7 +91,7 @@ module Checkout
 
       def calculate_deductible(original_cost, discount)
         if discount.percentage_based?
-          (original_cost * (discount.deductible_amount / 100))
+          (original_cost * (discount.deductible_amount.to_f / 100))
         else
           discount.deductible_amount
         end
@@ -127,8 +131,23 @@ module Checkout
 
       def apply_global_discounts(original_total)
         global_scope_discounts.reduce(original_total) do |current_total, discount|
-          determine_new_price_with_discount(current_total, discount)
+          with_price_bias_applied(current_total, discount) do
+            applied_global_discounts << discount.name # save discount name for tracking purposes
+            determine_new_price_with_discount(current_total, discount)
+          end
         end
+      end
+
+      def applied_global_discounts
+        @applied_global_discounts ||= []
+      end
+
+      def with_price_bias_applied(original_total, discount)
+        apply_price_bias?(original_total, discount) ? yield : original_total
+      end
+
+      def apply_price_bias?(original_total, discount)
+        discount.gt_bias && original_total >= discount.gt_bias
       end
 
       def global_scope_discounts

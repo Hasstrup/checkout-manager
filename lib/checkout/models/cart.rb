@@ -30,7 +30,7 @@ module Checkout
       end
 
       def bulk_scan(item_names)
-        item_names.split(",").each(&method(:scan))
+        item_names.split(", ").each(&method(:scan))
         self
       end
 

@@ -18,6 +18,7 @@ discounts:
     applicable_item_id: null
     usable: true
     priority: 1
+    gt_bias: null
   batch_discount_on_a:
     global: false # only applicable to single inventory items
     deductible_type: unit
@@ -28,3 +29,4 @@ discounts:
     applicable_item_count: 2
     usable: true
     priority: 1
+    gt_bias: null

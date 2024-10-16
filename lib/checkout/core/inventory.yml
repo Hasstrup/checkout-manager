@@ -22,6 +22,7 @@ discounts:
     applicable_item_count: 2
     usable: true
     priority: 1
+    gt_bias: null
   batch_discount_on_b:
     global: false
     deductible_type: unit
@@ -32,6 +33,7 @@ discounts:
     applicable_item_count: 3
     usable: true
     priority: 1
+    gt_bias: null
   single_discount_on_c: # added this for demonstration purposes
     global: false
     deductible_type: unit
@@ -42,6 +44,7 @@ discounts:
     applicable_item_id: 3
     usable: false
     priority: 1
+    gt_bias: null
   group_discount_on_price_total:
     global: true # apply this discount to total price
     deductible_type: percentage
@@ -52,3 +55,4 @@ discounts:
     applicable_item_id: null
     usable: true
     priority: 1
+    gt_bias: 200

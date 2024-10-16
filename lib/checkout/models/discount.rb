@@ -4,7 +4,7 @@ require "checkout/core/concerns/discount_operations"
 module Checkout
   module Models
     DISCOUNT_KEYS = %i[name global deductible_type deductible_amount fixed_amount_total application_context
-                       applicable_item_count applicable_item_id usable priority].freeze
+                       applicable_item_count applicable_item_id usable priority gt_bias].freeze
     Discount = Struct.new(*DISCOUNT_KEYS, keyword_init: true) do
       extend Core::Concerns::DiscountOperations
 
@@ -33,8 +33,11 @@ module Checkout
       end
 
       def valid?
-        usable? &&
-          batch? && applicable_item_count > 1 ||
+        usable? && valid_for_calc?
+      end
+
+      def valid_for_calc?
+        batch? && applicable_item_count > 1 ||
           single? && applicable_item_count == 1 ||
           global? && deductible_amount.positive?
       end
