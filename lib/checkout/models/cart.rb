@@ -2,7 +2,7 @@
 
 require "checkout/core/inventory_builder"
 require "checkout/core/cart_summator"
-require "checkout/core/store_calculations"
+require "checkout/core/concerns/store_calculations"
 require "forwardable"
 
 module Checkout
@@ -12,7 +12,7 @@ module Checkout
 
       StoreEntry = Struct.new(:item, :amount, keyword_init: true)
       Store = Struct.new(:store_entries, :grand_total, :net_total, keyword_init: true) do
-        include Checkout::Core::StoreCalculations
+        include Core::Concerns::StoreCalculations
       end
 
       def initialize
@@ -20,7 +20,7 @@ module Checkout
       end
 
       def total
-        Checkout::Core::CartSummator.call(cart: self, discounts: inventory.discounts)
+        Core::CartSummator.call(cart: self, discounts: inventory.discounts)
       end
 
       def scan(item_name)
@@ -48,7 +48,7 @@ module Checkout
       attr_reader :store
 
       def inventory
-        @inventory ||= ::Checkout::Core::InventoryBuilder.build
+        @inventory ||= Core::InventoryBuilder.build
       end
     end
   end
