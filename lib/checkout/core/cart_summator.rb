@@ -30,7 +30,7 @@ module Checkout
       attr_reader :cart, :discounts
 
       def applied_cart_cursors
-        @applied_cart_cursors ||= cart.store_entries.map do |cart_entry|
+        @applied_cart_cursors ||= cart.entries.map do |cart_entry|
           build_entry_cursor_with_discount(cart_entry)
         end
       end
@@ -93,12 +93,12 @@ module Checkout
         discounted_unit_price = compute_discounted_unit_price(cursor, discounts)
         cursor.current_cost += cursor.remainder * discounted_unit_price
         cursor.remainder = 0
-        cursor.applied_discounts << discount.name
         cursor
       end
 
       def compute_discounted_unit_price(cursor, discounts)
         discounts.reduce(cursor.entry.item.cost) do |current_price, discount|
+          cursor.applied_discounts << discount.name
           determine_new_price_with_discount(discount, current_price)
         end
       end

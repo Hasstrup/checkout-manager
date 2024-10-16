@@ -26,10 +26,18 @@ module Checkout
       def scan(item_name)
         inventory_item = inventory.find_item(item_name)
         store.add(inventory_item) if inventory_item
+        self
       end
 
       def bulk_scan(item_names)
         item_names.split(",").each(&method(:scan))
+        self
+      end
+
+      def entries
+        store.store_entries.values.map do |entry_attributes|
+          StoreEntry.new(**entry_attributes)
+        end
       end
 
       # delegate store_entries to store
@@ -39,7 +47,6 @@ module Checkout
 
       attr_reader :store
 
-      # remember to take in
       def inventory
         @inventory ||= ::Checkout::Core::InventoryBuilder.build
       end
