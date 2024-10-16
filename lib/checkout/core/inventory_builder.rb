@@ -25,9 +25,10 @@ module Checkout
       # @examples:
       #  ::Checkout::Core::InventoryBuilder.build
       def build
-        ::Checkout::Models::Inventory.new(
+        Models::Inventory.new(
           items: inventory_items,
-          discounts: inventory_discounts
+          discounts: inventory_discounts,
+          source_file_path: inventory_source_file_path
         )
       end
 
@@ -35,20 +36,27 @@ module Checkout
 
       attr_reader :source_path
 
+      # @return [Hash]
       def inventory_source
-        @inventory_source ||=
-          ::YAML.load_file(source_path || File.join(File.dirname(__FILE__), "./inventory.yml"))
+        @inventory_source ||= YAML.load_file(inventory_source_file_path)
       end
 
+      # @return [String]
+      def inventory_source_file_path
+        @inventory_source_file_path ||= source_path || File.join(File.dirname(__FILE__), "./inventory.yml")
+      end
+
+      # @return [Array<Checkout::Models::InventoryItem>]
       def inventory_items
         @inventory_items ||= inventory_source[INVENTORY_ITEMS_KEY].map do |_, item_attributes|
-          ::Checkout::Models::InventoryItem.new(**item_attributes)
+          Models::InventoryItem.new(**item_attributes)
         end
       end
 
+      # @return [Array<Checkout::Models::Discount>]
       def inventory_discounts
         @inventory_discounts ||= inventory_source[INVENTORY_DISCOUNTS_KEY].map do |key, discount_attributes|
-          ::Checkout::Models::Discount.new(**discount_attributes.merge(name: key))
+          Models::Discount.new(**discount_attributes.merge(name: key))
         end
       end
     end

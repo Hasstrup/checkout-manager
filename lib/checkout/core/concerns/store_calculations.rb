@@ -14,7 +14,7 @@ module Checkout
           }
         end
 
-        # takes an inventory item and decreases the amount containted in the store_entries key
+        # takes an inventory item and decreases the amount contained in the store_entries key
         # @param [::Checkout::Models::InventoryItem] inventory item to be removed
         # @returns [Integer, nil] current count of the item
         def remove(item)

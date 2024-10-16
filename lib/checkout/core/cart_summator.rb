@@ -23,6 +23,7 @@ module Checkout
       def initialize(cart:, discounts:)
         @cart = cart
         @discounts = discounts
+        @applied_global_discounts = []
       end
 
       def call
@@ -35,7 +36,7 @@ module Checkout
 
       private
 
-      attr_reader :cart, :discounts
+      attr_reader :cart, :discounts, :applied_global_discounts
 
       def applied_cart_cursors
         @applied_cart_cursors ||= cart.entries.map do |cart_entry|
@@ -47,7 +48,6 @@ module Checkout
         @usable_discounts ||= discounts.select(&:valid?)
       end
 
-      # find the applicable discounts apply and update the cost field
       def build_entry_cursor_with_discount(cart_entry)
         batch_discounts, single_discounts = applicable_discounts_for(cart_entry)
         cursor = apply_batch_discounts(initial_cursor_for(cart_entry), batch_discounts)
@@ -70,9 +70,9 @@ module Checkout
         original_cost = cursor.entry.item.cost
         cursor.current_cost += discount.fixed_amount_total || infer_additional_entry_cost(original_cost, discount)
         cursor.remainder -= discount.applicable_item_count
-        cursor.applied_discounts << discount.name # save applied discounts for introspection
+        cursor.applied_discounts << discount.name
         # if the remainder is greater than the discount's applicable_amount,
-        # take another batch and apply same discount
+        # then take another batch and apply same discount.
         apply_batch_discount!(cursor, discount)
         cursor
       end
@@ -122,20 +122,16 @@ module Checkout
 
       def select_discounts_for_entry(entry)
         entry_discounts = usable_discounts.select { |discount| discount.applicable_item_id == entry.item.id }
-        entry_discounts.any? ? entry_discounts : [Models::Discount.base_discount_for(entry)]
+        entry_discounts.any? ? entry_discounts : [Models::Discount.base_discount_for(entry.item)]
       end
 
       def apply_global_discounts(original_total)
         global_scope_discounts.reduce(original_total) do |current_total, discount|
           with_price_bias_applied(current_total, discount) do
-            applied_global_discounts << discount.name # save discount name for tracking purposes
+            applied_global_discounts << discount.name
             determine_new_price_with_discount(current_total, discount)
           end
         end
-      end
-
-      def applied_global_discounts
-        @applied_global_discounts ||= []
       end
 
       def with_price_bias_applied(original_total, discount)

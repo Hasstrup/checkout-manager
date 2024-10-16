@@ -51,7 +51,7 @@ RSpec.describe Checkout::Models::Cart do
     context "when sent an incorrect list of input names" do
       let(:item_names) { "A,B,C,D" }
 
-      it "does nothing" do # TODO: should this throw an exception instead?
+      it "does nothing" do # should this throw an exception instead?
         expect(cart.bulk_scan(item_names).entries.size).to eq(0)
       end
     end
