@@ -5,7 +5,7 @@ module Checkout
     class CartSummator
       CURSOR_KEYS = %i[entry current_cost remainder applied_discounts].freeze
       Cursor = Struct.new(*CURSOR_KEYS, keyword_init: true)
-      SummationResult = Struct.new(:total, :cursors)
+      SummationResult = Struct.new(:total, :cursors, keyword_init: true)
       def self.call(**kwargs)
         new(**kwargs).call
       end
@@ -30,23 +30,23 @@ module Checkout
       attr_reader :cart, :discounts
 
       def applied_cart_cursors
-        @applied_cart_cursors ||= cart.items.map do |cart_entry|
+        @applied_cart_cursors ||= cart.store_entries.map do |cart_entry|
           build_entry_cursor_with_discount(cart_entry)
         end
       end
 
       def usable_discounts
-        @usable_discounts ||= discounts.filter(&:valid?)
+        @usable_discounts ||= discounts.select(&:valid?)
       end
 
       # find the applicable discounts apply and update the cost field
       def build_entry_cursor_with_discount(cart_entry)
         batch_discounts, single_discounts = applicable_discounts_for(cart_entry)
-        cursor = apply_batch_discounts(batch_discounts, build_initial_cursor_for(cart_entry))
+        cursor = apply_batch_discounts(batch_discounts, initial_cursor_for(cart_entry))
         apply_single_discounts!(single_discounts, cursor)
       end
 
-      def build_initial_cursor_for(cart_entry)
+      def initial_cursor_for(cart_entry)
         Cursor.new(
           entry: cart_entry,
           remainder: cart_entry.amount,
@@ -67,7 +67,7 @@ module Checkout
         original_cost = cursor.entry.item.cost
         cursor.current_cost += discount.fixed_amount_total || infer_additional_entry_cost(original_cost, discount)
         cursor.remainder -= discount.applicable_item_count
-        cursor.applied_discounts << discount.name
+        cursor.applied_discounts << discount.name # store applied discounts for introspection purposes
         # if what we have left is greater than the discount's item amount, take another batch and apply same discount
         apply_batch_discount!(discount, cursor) if reapply_discount?(cursor, discount)
         cursor
@@ -90,13 +90,17 @@ module Checkout
       end
 
       def apply_single_discounts!(discounts, cursor)
-        discounted_unit_price = discounts.reduce(cursor.entry.item.cost) do |current_price, discount|
-          determine_new_price_with_discount(discount, current_price)
-        end
+        discounted_unit_price = compute_discounted_unit_price(cursor, discounts)
         cursor.current_cost += cursor.remainder * discounted_unit_price
         cursor.remainder = 0
         cursor.applied_discounts << discount.name
         cursor
+      end
+
+      def compute_discounted_unit_price(cursor, discounts)
+        discounts.reduce(cursor.entry.item.cost) do |current_price, discount|
+          determine_new_price_with_discount(discount, current_price)
+        end
       end
 
       def determine_new_price_with_discount(discount, original_cost)

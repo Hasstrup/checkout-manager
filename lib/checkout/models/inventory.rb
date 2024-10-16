@@ -10,6 +10,10 @@ module Checkout
       def add_discount; end
 
       def add_item; end
+
+      def find_item(item_name)
+        items.find { |item| item.name == item_name }
+      end
     end
   end
 end

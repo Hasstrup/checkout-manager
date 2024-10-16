@@ -6,11 +6,11 @@ module Checkout
                        applicable_item_count applicable_item_id usable priority].freeze
     Discount = Struct.new(*DISCOUNT_KEYS, keyword_init: true) do
       def batch?
-        !global && application_context.to_sym == :batch
+        !global? && application_context.to_sym == :batch
       end
 
       def single?
-        !global && application_context.to_sym == :single
+        !global? && application_context.to_sym == :single
       end
 
       def percentage_based?
@@ -19,6 +19,14 @@ module Checkout
 
       def unit_based?
         deductible_type.to_sym == :unit
+      end
+
+      def global?
+        global
+      end
+
+      def usable?
+        usable
       end
 
       def valid?
