@@ -26,7 +26,7 @@ RSpec.describe Checkout::Models::Cart do
     context "when the item name is not present in the inventory" do
       let(:item_name) { "D" }
 
-      it "does not add it to the list of entries" do
+      it "does not add to the list of entries" do
         expect(target_entry).to be_nil
       end
     end
@@ -62,7 +62,6 @@ RSpec.describe Checkout::Models::Cart do
     let(:result) { cart.bulk_scan(item_names).total }
 
     it "computes the total amount of the contained entries" do
-      # more detailed specs present in spec/core/cart_summator_spec.rb
       aggregate_failures do
         expect(result).to be_a(Checkout::Core::CartSummator::SummationResult)
         expect(result.total).to eq(240)

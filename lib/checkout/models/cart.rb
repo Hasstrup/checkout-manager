@@ -28,7 +28,8 @@ module Checkout
         @pricing_rules_path = pricing_rules_path
       end
 
-      # receives the item's name as string, finds the matching inventory item and adds to store
+      # Receives the item's name as string, finds the matching inventory item and adds to store.
+      #
       # @param [String] name the name of the item
       # @return [Checkout::Models::Cart]
       def scan(item_name)
@@ -37,8 +38,9 @@ module Checkout
         self
       end
 
-      # receives a comma separated list of item names as string, finds the matching inventory items
-      # and adds to it's internal store
+      # Receives a comma separated list of item names as string, finds the matching inventory items
+      # and adds to it's internal store.
+      #
       # @param [String] name names of the items
       # @return [Checkout::Models::Cart]
       def bulk_scan(item_names)
@@ -46,7 +48,8 @@ module Checkout
         self
       end
 
-      # builds a list of store entry structs from the submitted item names
+      # Builds a list of store entry structs from the submitted item names.
+      #
       # @param [String] name the name of the item
       # @return [Array<Checkout::Models::Cart::StoreEntry>]
       def entries
@@ -55,7 +58,8 @@ module Checkout
         end
       end
 
-      # sends all the store entries to the summator class and returns results
+      # Sends all the store entries to the summator class and returns results.
+      #
       # @return [::Checkout::Core::CartSummator::SummationResult]
       def total
         Core::CartSummator.call(cart: self, discounts: inventory.discounts)

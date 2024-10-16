@@ -4,7 +4,8 @@ module Checkout
   module Core
     module Concerns
       module StoreCalculations
-        # takes an inventory item and adds to the store_entries key
+        # Takes an inventory item and adds to the store_entries key.
+        #
         # @param [::Checkout::Models::InventoryItem] inventory item to be added
         # @returns [Hash] the current entry context
         def add(item)
@@ -14,7 +15,8 @@ module Checkout
           }
         end
 
-        # takes an inventory item and decreases the amount contained in the store_entries key
+        # Takes an inventory item and decreases the amount contained in the store_entries key.
+        #
         # @param [::Checkout::Models::InventoryItem] inventory item to be removed
         # @returns [Integer, nil] current count of the item
         def remove(item)

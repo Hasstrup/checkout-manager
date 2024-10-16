@@ -36,13 +36,15 @@ module Checkout
     Discount = Struct.new(*DISCOUNT_KEYS, keyword_init: true) do
       extend Core::Concerns::DiscountOperations
 
-      # Returns whether or not a discount is applied in item batches
+      # Returns whether or not a discount is applied in item batches.
+      #
       # @return [Boolean]
       def batch?
         !global? && application_context&.to_sym == :batch
       end
 
-      # Returns whether or not a discount is applied in item units
+      # Returns whether or not a discount is applied in item units.
+      #
       # @return [Boolean]
       def single?
         !global? && application_context&.to_sym == :single

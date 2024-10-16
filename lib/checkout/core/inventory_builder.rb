@@ -19,8 +19,9 @@ module Checkout
         @source_path = source_path
       end
 
-      # reads the yaml file and builds the inventory object
-      # from the keys defined in the source file
+      # Reads the yaml file and builds the inventory object
+      # from the keys defined in the source file.
+      #
       # @return [Checkout::Models::Inventory]
       # @examples:
       #  ::Checkout::Core::InventoryBuilder.build

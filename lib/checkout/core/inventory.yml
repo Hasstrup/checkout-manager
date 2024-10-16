@@ -34,7 +34,7 @@ discounts:
     usable: true
     priority: 1
     gt_bias: null
-  single_discount_on_c: # added this for demonstration purposes
+  single_discount_on_c: # added this for demonstrating unit based deductions
     global: false
     deductible_type: unit
     deductible_amount: 5

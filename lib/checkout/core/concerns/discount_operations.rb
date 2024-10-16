@@ -4,7 +4,8 @@ module Checkout
   module Core
     module Concerns
       module DiscountOperations
-        # builds a new discount object with base values
+        # Builds a new discount object with base values.
+        #
         # @param [Checkout::Models::InventoryItem] entry
         # @return [Checkout::Models::Discount]
         def base_discount_for(item)
@@ -16,7 +17,8 @@ module Checkout
           )
         end
 
-        # sensible defaults for discount attributes
+        # Sensible defaults for discount attributes.
+        #
         # @return [Hash]
         def base_discount_attributes
           {

@@ -25,6 +25,7 @@ module Checkout
       # Takes in the discount attributes, builds the discount struct and appends
       # it to it's discounts field. If the optional persist argument is passed, then
       # the source file will be updated.
+      #
       # @param [Hash] discount_attributes
       # @param [Boolean] persist
       # @return [Checkout::Models::Discount]
@@ -38,9 +39,10 @@ module Checkout
         )
       end
 
-      # builds the InventoryItem struct from the passed attributes, and appends
+      # Builds the InventoryItem struct from the passed attributes, and appends
       # it to it's items field. If the optional persist argument is passed, then
       # the source file will be updated.
+      #
       # @param [Hash] item_attributes
       # @param [Boolean] persist
       # @return [Checkout::Models::Discount]
@@ -54,7 +56,8 @@ module Checkout
         )
       end
 
-      # receives an item_name, checks it's store and returns the matching item.
+      # Receives an item_name, checks it's store and returns the matching item.
+      #
       # @param [String] item_name
       # @return [Checkout::Models::InventoryItem]
       def find_item(item_name)
@@ -75,13 +78,15 @@ module Checkout
 
         klass.new(**attributes).tap do |inventory_record|
           send(field) << inventory_record
-          persist_to_source_file!(inventory_record, field) if persist
+          persist_to_source_file!(record_attributes, field) if persist
         end
       end
 
-      # checks if all the keys for a inventory child class is contained in the
-      # given input. Validation is simple at the moment - in the future, we could
+      # Checks if all the keys for a inventory child class is contained in the
+      # given input. Validation is simple at the moment - we only check for
+      # key presence. In the future, we could
       # check for type consistency.
+      #
       # @param [Hash] record_attributes
       # @param [Array<Symbol>] selectors
       # @return [Boolean]
@@ -91,7 +96,8 @@ module Checkout
         end
       end
 
-      # Load up the inventory records contained in the source file
+      # Load up the inventory records contained in the source file.
+      #
       # @return [Hash]
       def source
         @source ||= YAML.load_file(source_file_path)
@@ -100,12 +106,12 @@ module Checkout
       # @param [Hash] inventory_record
       # @param [Symbol] field
       def persist_to_source_file!(inventory_record, field)
-        inventory_record_name = inventory_record.delete(:name)
         records = source.dup
-        records[field.to_s][inventory_record_name] = inventory_record
+        records[field.to_s][inventory_record[:name]] = inventory_record.transform_keys(&:to_s)
         write_to_source_file!(records)
       end
 
+      # @param [Hash] records
       def write_to_source_file!(records)
         File.open(source_file_path, "w") do |file|
           file.write(records.to_yaml)
