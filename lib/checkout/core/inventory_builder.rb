@@ -15,6 +15,7 @@ module Checkout
       end
 
       # @param [String] source_path the path to the yaml file containing the inventory
+      # @return [Checkout::Core::InventoryBuilder]
       def initialize(source_path = nil)
         @source_path = source_path
       end

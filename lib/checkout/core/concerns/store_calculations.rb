@@ -5,7 +5,7 @@ module Checkout
     module Concerns
       module StoreCalculations
         # @param [::Checkout::Models::InventoryItem] inventory item to be added
-        # @returns [Hash] the current entry context
+        # @return [Hash] the current entry context
         def add(item)
           store_entries[item.name] = {
             amount: (store_entries.dig(item.name, :amount) || 0) + 1,
@@ -14,7 +14,7 @@ module Checkout
         end
 
         # @param [::Checkout::Models::InventoryItem] inventory item to be removed
-        # @returns [Integer, nil] current count of the item
+        # @return [Integer, nil] current count of the item
         def remove(item)
           store_entries[item.name] &&
             store_entries[item.name][:amount] -= 1

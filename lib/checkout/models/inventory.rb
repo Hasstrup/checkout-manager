@@ -96,7 +96,6 @@ module Checkout
         end
       end
 
-
       # @return [Hash]
       def source
         @source ||= YAML.load_file(source_file_path)
