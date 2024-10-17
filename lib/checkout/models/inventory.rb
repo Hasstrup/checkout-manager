@@ -96,8 +96,7 @@ module Checkout
         end
       end
 
-      # Load up the inventory records contained in the source file.
-      #
+
       # @return [Hash]
       def source
         @source ||= YAML.load_file(source_file_path)

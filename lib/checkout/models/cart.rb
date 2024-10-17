@@ -39,7 +39,7 @@ module Checkout
       end
 
       # Receives a comma separated list of item names as string, finds the matching inventory items
-      # and adds to it's internal store.
+      # and adds them to it's internal store.
       #
       # @param [String] name names of the items
       # @return [Checkout::Models::Cart]
@@ -48,8 +48,6 @@ module Checkout
         self
       end
 
-      # Builds a list of store entry structs from the submitted item names.
-      #
       # @param [String] name the name of the item
       # @return [Array<Checkout::Models::Cart::StoreEntry>]
       def entries
@@ -58,14 +56,11 @@ module Checkout
         end
       end
 
-      # Sends all the store entries to the summator class and returns results.
-      #
       # @return [::Checkout::Core::CartSummator::SummationResult]
       def total
         Core::CartSummator.call(cart: self, discounts: inventory.discounts)
       end
 
-      # delegate store_entries to store
       def_delegators :@store, *%i[store_entries add remove]
 
       private
