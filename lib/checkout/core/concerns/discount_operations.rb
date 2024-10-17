@@ -6,9 +6,9 @@ module Checkout
       module DiscountOperations
         # @param [Checkout::Models::InventoryItem] entry
         # @return [Checkout::Models::Discount]
-        def base_discount_for(item)
+        def base_discount_for(item, attributes = base_discount_attributes)
           new(
-            **base_discount_attributes.merge(
+            **attributes.merge(
               applicable_item_id: item.id,
               name: :"base_discount_on_#{item.name.downcase}"
             )

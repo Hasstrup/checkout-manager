@@ -45,8 +45,6 @@ RSpec.describe Checkout::Core::CartSummator do
       let(:item_list) { "B, A, B, B, A" }
       let(:expected_cursor_map) do
         {
-          #  Applies the fixed amount totals to each entry
-          #
           A: { original_cost: 100, applied_discounts: ["batch_discount_on_a"], amount: 2, actual_cost: 90 },
           B: { original_cost: 90, applied_discounts: ["batch_discount_on_b"], amount: 3, actual_cost: 75 }
         }
@@ -77,7 +75,6 @@ RSpec.describe Checkout::Core::CartSummator do
       let(:item_list) { "C, B, A, A, C, B, C" }
       let(:expected_cursor_map) do
         {
-          #  Applies the fixed amount totals to each entry as defined in the example.
           A: { original_cost: 100, applied_discounts: ["batch_discount_on_a"], amount: 2, actual_cost: 90 },
           B: { original_cost: 60, applied_discounts: [], amount: 2, actual_cost: 60 },
           C: { original_cost: 60, applied_discounts: [:base_discount_on_c], amount: 3, actual_cost: 60 }

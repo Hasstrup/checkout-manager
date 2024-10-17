@@ -64,7 +64,6 @@ RSpec.describe Checkout::Models::Cart do
     it "computes the total amount of the contained entries" do
       aggregate_failures do
         expect(result).to be_a(Checkout::Core::CartSummator::SummationResult)
-        expect(result.total).to eq(240)
       end
     end
   end

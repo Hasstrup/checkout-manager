@@ -53,7 +53,7 @@ module Checkout
       # along with the inventory item - each entry looks like this -> { item: #inventory_item, amount: #amount }. We loop
       # through these entries, check the inventory for the discounts defined for each one,
       # and send this combination (entry + discounts) for price calculation.
-      # When calulcating the price for each entry, we separate the discounts into batch and single discounts.
+      # When calculating the price for each entry, we separate the discounts into batch and single discounts.
       # We recursively go through the batch discounts (if any), applying their deductible to
       # the price and reducing the cursor's remainder in the process. After all the batch discounts are applied,
       # we apply the single discounts to the remaining items - until the remainder reaches zero.
@@ -143,7 +143,13 @@ module Checkout
       # @param [Checkout::Model::Discount] discount
       # @return [Integer | Float]
       def infer_additional_entry_cost(original_cost, discount)
-        original_cost - calculate_deductible(original_cost, discount) * discount.applicable_item_count
+        original_cost - (
+          if discount.percentage_based?
+            calculate_deductible(original_cost, discount) * discount.applicable_item_count
+          else
+            discount.deductible_amount
+          end
+        )
       end
 
       # @param [Integer | Float] original_cost
@@ -227,7 +233,8 @@ module Checkout
       # @param [Checkout::Model::Discount] discount
       # @return [Boolean]
       def apply_price_bias?(original_total, discount)
-        discount.gt_bias && original_total >= discount.gt_bias
+        !discount.gt_bias ||
+          discount.gt_bias && original_total >= discount.gt_bias
       end
 
       # @return [Array<Checkout::Models::Discount>]

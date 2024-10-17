@@ -61,16 +61,17 @@ module Checkout
         Core::CartSummator.call(cart: self, discounts: inventory.discounts)
       end
 
-      def_delegators :@store, *%i[store_entries add remove]
-
-      private
-
-      attr_reader :store, :pricing_rules_path
-
       # @return [Array<Checkout::Models::Inventory>]
       def inventory
         @inventory ||= Core::InventoryBuilder.new(pricing_rules_path).build
       end
+
+      def_delegators :@store, *%i[store_entries add remove]
+      def_delegators :@inventory, *%i[add_discount add_item items discounts]
+
+      private
+
+      attr_reader :store, :pricing_rules_path
     end
   end
 end
